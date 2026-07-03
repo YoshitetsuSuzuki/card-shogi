@@ -5,7 +5,7 @@
  * 役割2: オフラインキャッシュ（PWA）。同一オリジンのアセットを保存し、
  *        圏外でもCPU対戦・ふたりで対戦が動くようにする。
  */
-const CACHE = 'card-shogi-v1';
+const CACHE = 'card-shogi-v2';
 
 self.addEventListener('install', () => self.skipWaiting());
 self.addEventListener('activate', (event) => {
@@ -45,17 +45,19 @@ async function handleAsset(request) {
   const cache = await caches.open(CACHE);
   const cached = await cache.match(request);
   const isHashed = new URL(request.url).pathname.includes('/assets/');
-  if (cached && isHashed) return cached; // ハッシュ付きアセットは不変なのでキャッシュ優先
+  // 注意: ワーカースクリプト（やねうら王のスレッド等）にも COOP/COEP が必要。
+  // 同一オリジンの応答すべてにヘッダーを付与する（本家 coi-serviceworker と同方式）
+  if (cached && isHashed) return withCoiHeaders(cached);
   if (cached) {
     // エンジン・アイコン等（URL据え置き）は表示はキャッシュ、裏で更新確認
     fetch(request)
       .then((res) => { if (res.ok) cache.put(request, res.clone()); })
       .catch(() => {});
-    return cached;
+    return withCoiHeaders(cached);
   }
   const response = await fetch(request);
   if (response.ok) cache.put(request, response.clone());
-  return response;
+  return withCoiHeaders(response);
 }
 
 self.addEventListener('fetch', (event) => {
