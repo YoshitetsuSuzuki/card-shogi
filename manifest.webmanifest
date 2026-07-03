@@ -1,0 +1,17 @@
+{
+  "name": "カード将棋",
+  "short_name": "カード将棋",
+  "description": "将棋はそのまま。カードで局面が変わる。",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f6f0e3",
+  "theme_color": "#e8734a",
+  "lang": "ja",
+  "icons": [
+    { "src": "./icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "./icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "./icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

@@ -3,8 +3,14 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <!-- SharedArrayBuffer 用（やねうら王WASM）: GitHub Pages では Service Worker でヘッダーを補う -->
-    <script src="./coi-serviceworker.min.js"></script>
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <meta name="theme-color" content="#e8734a" />
+    <link rel="apple-touch-icon" href="./apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="カード将棋" />
+    <!-- PWA兼COOP/COEPヘッダー付与のService Worker（本番のみ登録） -->
+    <script src="./register-sw.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -13,7 +19,7 @@
       crossorigin="anonymous"
     />
     <title>カード将棋</title>
-    <script type="module" crossorigin src="./assets/index-Bd8vhwVv.js"></script>
+    <script type="module" crossorigin src="./assets/index-HZz0NdSZ.js"></script>
     <link rel="stylesheet" crossorigin href="./assets/index-DgYZLUmw.css">
   </head>
   <body>
