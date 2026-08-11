@@ -5,7 +5,13 @@
  * 役割2: オフラインキャッシュ（PWA）。同一オリジンのアセットを保存し、
  *        圏外でもCPU対戦・ふたりで対戦が動くようにする。
  */
-const CACHE = 'card-shogi-v2';
+const CACHE = 'card-shogi-v3';
+
+/** エンジンのバイナリ（水匠5評価28MB・wasm等）は不変。キャッシュ優先で再取得しない
+ *  （非ハッシュ資産の裏側再取得で毎回28MBを再DLしないため）。更新時は CACHE 版を上げる。 */
+function isImmutableEngineAsset(pathname) {
+  return /\/engine(-hk|2)?\//.test(pathname);
+}
 
 self.addEventListener('install', () => self.skipWaiting());
 self.addEventListener('activate', (event) => {
@@ -44,10 +50,12 @@ async function handleNavigation(request) {
 async function handleAsset(request) {
   const cache = await caches.open(CACHE);
   const cached = await cache.match(request);
-  const isHashed = new URL(request.url).pathname.includes('/assets/');
+  const pathname = new URL(request.url).pathname;
+  // ハッシュ付き資産・エンジンバイナリはキャッシュ優先で固定（裏側再取得しない）。
+  const isImmutable = pathname.includes('/assets/') || isImmutableEngineAsset(pathname);
   // 注意: ワーカースクリプト（やねうら王のスレッド等）にも COOP/COEP が必要。
   // 同一オリジンの応答すべてにヘッダーを付与する（本家 coi-serviceworker と同方式）
-  if (cached && isHashed) return withCoiHeaders(cached);
+  if (cached && isImmutable) return withCoiHeaders(cached);
   if (cached) {
     // エンジン・アイコン等（URL据え置き）は表示はキャッシュ、裏で更新確認
     fetch(request)
